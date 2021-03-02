@@ -14,9 +14,14 @@ jobs:
         run: |
           echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin quay.io
       - name: Build the Docker image
+        env:
+          ARGOCD_VERSION: v1.8.6
         run: |
           docker build \
             --file Dockerfile \
             --tag quay.io/diomedet/argocd-tools:latest \
+            --tag quay.io/diomedet/argocd-tools:$ARGOCD_VERSION \
+            --build-arg ARGOCD_VERSION=$ARGOCD_VERSION \
             .
           docker push quay.io/diomedet/argocd-tools:latest
+          docker push quay.io/diomedet/argocd-tools:$ARGOCD_VERSION

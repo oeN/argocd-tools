@@ -1,0 +1,22 @@
+name: Build Docker Image
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to Quay
+        run: |
+          echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin quay.io
+      - name: Build the Docker image
+        run: |
+          docker build \
+            --file Dockerfile \
+            --tag quay.io/diomedet/argocd-tools:latest \
+            .
+          docker push quay.io/diomedet/argocd-tools:latest

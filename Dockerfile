@@ -1,11 +1,11 @@
 # Base system
-FROM alpine:3.13 as base
+FROM debian:buster as base
 
 # Download argocd
 FROM base as download-argocd
 
-RUN apk update && apk upgrade
-RUN apk add curl
+RUN apt update && apt upgrade -y
+RUN apt install curl -y
 
 ARG ARGOCD_VERSION
 RUN echo "version: $ARGOCD_VERSION"
@@ -18,5 +18,5 @@ FROM base
 
 COPY --from=download-argocd /usr/local/bin/argocd /usr/local/bin/argocd
 
-RUN apk update && apk upgrade
-RUN apk add jq
+RUN apt update && apt upgrade -y
+RUN apt install jq -y

@@ -18,4 +18,4 @@ FROM base
 
 COPY --from=download-argocd /usr/local/bin/argocd /usr/local/bin/argocd
 
-RUN apt install jq -y
+RUN apt install jq git -y

@@ -1,21 +1,15 @@
-# Base system
-FROM debian:buster as base
-RUN apt update && apt install -y --no-install-recommends ca-certificates
+FROM argoproj/argocd:latest
+# TODO: use a smaller base image and install just the argocd cli but you need to fix this error before
+# time="2021-03-19T12:19:34Z" level=fatal msg="rpc error: code = Internal desc = transport: received the unexpected content-type \"text/plain; charset=utf-8\"
 
-# Download argocd
-FROM base as download-argocd
+USER root
 
-RUN apt install curl -y
+RUN apt-get update && \
+    apt-get install -y \
+        ca-certificates \
+        jq \
+        git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
-ARG ARGOCD_VERSION
-RUN echo "version: $ARGOCD_VERSION"
-RUN curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/$ARGOCD_VERSION/argocd-linux-amd64
-RUN chmod +x /usr/local/bin/argocd
-
-RUN argocd version --client
-
-FROM base
-
-COPY --from=download-argocd /usr/local/bin/argocd /usr/local/bin/argocd
-
-RUN apt install jq git -y
+USER argocd
